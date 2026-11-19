@@ -1,0 +1,43 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: app1
+  # this labels are replicaset labels
+  labels: 
+    app: frontend
+    tier: web
+    purpose: deployment
+spec:
+  # modify replicas according to your case
+  replicas: 2
+  selector:
+    # replicaset use these labels to find the pods for creating desired number of replicas
+    matchLabels:
+      app: frontend
+      tier: web
+      purpose: deployment
+  # pod template
+  template:
+    metadata:
+      labels:
+        app: frontend
+        tier: web
+        purpose: deployment
+    spec:
+      containers:
+      - name: nginx
+        image: niranjan2505/app1:1.0.0
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: nginx
+spec: 
+  selector: # labels are used as selectors
+    app: frontend
+    tier: web
+    purpose: deployment
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

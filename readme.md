@@ -1,10 +1,10 @@
-# ingress controller
+# Ingress controller Load Balancer
 
 REGION_CODE=us-east-1
 CLUSTER_NAME=expense
 ACC_ID=306625066523
 
-1.oidc provider
+1.Oidc provider
 ---
 eksctl utils associate-iam-oidc-provider \
     --region $REGION_CODE \
@@ -34,7 +34,15 @@ eksctl create iamserviceaccount \
 --region $REGION_CODE \
 --approve
 
-5.Install drivers & controller to cluster
+5.Install Helm
+---
+
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4
+chmod 700 get_helm.sh
+./get_helm.sh
+
+
+6.Install eks chart repo & drivers
 ---
 
 * helm repo add eks https://aws.github.io/eks-charts
@@ -42,7 +50,7 @@ eksctl create iamserviceaccount \
 * wget https://raw.githubusercontent.com/aws/eks-charts/master/stable/aws-load-balancer-controller/crds/crds.yaml
 kubectl apply -f crds.yaml
 
-* install aws load balancer controller
+7.Install aws load balancer controller to the cluster
 ---
 
 helm install aws-load-balancer-controller eks/aws-load-balancer-controller -n kube-system --set clusterName=$CLUSTER_NAME --set serviceAccount.create=false --set serviceAccount.name=aws-load-balancer-controller

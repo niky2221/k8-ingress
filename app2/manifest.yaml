@@ -6,7 +6,7 @@ metadata:
   labels: 
     app: frontend
     tier: web
-    purpose: deployment
+    purpose: app2
 spec:
   # modify replicas according to your case
   replicas: 2
@@ -15,14 +15,14 @@ spec:
     matchLabels:
       app: frontend
       tier: web
-      purpose: deployment
+      purpose: app2
   # pod template
   template:
     metadata:
       labels:
         app: frontend
         tier: web
-        purpose: deployment
+        purpose: app2
     spec:
       containers:
       - name: nginx
@@ -36,7 +36,7 @@ spec:
   selector: # labels are used as selectors
     app: frontend
     tier: web
-    purpose: deployment
+    purpose: app2
   ports:
   - protocol: TCP
     port: 80

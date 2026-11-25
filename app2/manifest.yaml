@@ -1,0 +1,68 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: app2
+  # this labels are replicaset labels
+  labels: 
+    app: frontend
+    tier: web
+    purpose: deployment
+spec:
+  # modify replicas according to your case
+  replicas: 2
+  selector:
+    # replicaset use these labels to find the pods for creating desired number of replicas
+    matchLabels:
+      app: frontend
+      tier: web
+      purpose: deployment
+  # pod template
+  template:
+    metadata:
+      labels:
+        app: frontend
+        tier: web
+        purpose: deployment
+    spec:
+      containers:
+      - name: nginx
+        image: niranjan2505/app2:1.0.0
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: app2
+spec: 
+  selector: # labels are used as selectors
+    app: frontend
+    tier: web
+    purpose: deployment
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app2-ingress
+  annotations:              #annotations are used like labels, but labels are used as selectors only kubernates resources, annotations are used selectors as external resources like alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:306625066523:certificate/c26e5df0-ee9c-4a93-8101-1a84fdb6987e
+    alb.ingress.kubernetes.io/group.name: kubernetes-ingress
+spec:
+  ingressClassName: alb
+  rules:
+  - host: "app2.expense94.online"
+    http:
+      paths:
+      - path: "/"
+        pathType: Prefix
+        backend:
+          service:
+            name: app2
+            port:
+              number: 80
+
